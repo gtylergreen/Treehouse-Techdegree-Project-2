@@ -2,7 +2,9 @@
 //in an HTML Collection.
 const studentList = document.querySelector('ul');
 const students = studentList.children;
-console.log(students);
+const resultsDiv = document.querySelector('.page')
+console.log(resultsDiv)
+//console.log(students);
 
 
 // Function that displays the page, taking in the list of students
@@ -17,18 +19,21 @@ showPage = (list, page) => {
    //display. If not, their display property is set to none.
    for ( i = 0; i < list.length; i++ ) {
       if (i >= startIndex && i < endIndex ) {
-         students[i].style.display = 'block';
-         students[i].className = 'student-item cf'
+         list[i].style.display = 'block';
+         list[i].className = 'student-item cf'
       } else {
-         students[i].style.display = 'none';
+         list[i].style.display = 'none';
+         list[i].className = '';
       }
    }
+   return list;
 }
 
 
 
 //Function to create the links to allow for pagination.
-appendPageLinks = (list) => {
+appendPageLinks = (list, listItems) => {
+   
    //Determines the number of page links by taking in the length
    //of the list and dividing it by 10.
    let numberOfPages = list / 10 
@@ -59,10 +64,10 @@ appendPageLinks = (list) => {
    //create the new view.
    listDiv.addEventListener('click', (e) => {
    if (e.target.tagName === 'A' ) {
-      for (let i = 0; i < students.length; i++ ) {
-         students.className = '';
+      for (let i = 0; i < list; i++ ) {
+         listItems[i].className = '';
          }
-         showPage(students, e.target.textContent)
+         showPage(listItems, e.target.textContent)
       }
    })
 }
@@ -72,7 +77,7 @@ appendPageLinks = (list) => {
 showPage(students, 1);
 
 //Called to dynamically make updates based on user clicks.
-appendPageLinks(students.length);
+appendPageLinks(students.length, students);
 
 
 
@@ -83,6 +88,7 @@ addSearchBar = () => {
    const searchInput = document.createElement('input');
    searchInput.placeholder = 'Search for students...';
    const searchButton = document.createElement('button');
+   searchButton.className = 'search-button'
    searchButton.textContent = 'Search';
    searchBar.appendChild(searchInput);
    searchBar.appendChild(searchButton);
@@ -90,93 +96,84 @@ addSearchBar = () => {
 }
 
 refreshPage = () => {
+ 
    for (let i = 0; i < students.length; i ++) {
       students[i].style.display = 'none';
       students[i].removeAttribute('class');
-      console.log(students[i]);
+      //console.log(students[i]);
+   }
+   let noSearchText = document.querySelector('.no-search-results')
+   if (noSearchText) {
+      noSearchText.textContent = ''
    }
 }
 
 addSearchBar();
 
 search = (list) => {
+   
    let searchBar = document.querySelector('.student-search');
-   let searchInput = searchBar.children[0]
+   
+   let searchInput = searchBar.children[0];
+   let studentSearch = [];
+   let didntMeetCriteria = [];
    searchBar.addEventListener('click', (e) => {
+      
       if (e.target.tagName === 'BUTTON') {
+         debugger
          refreshPage();
-         
          const searchTerm = searchBar.firstElementChild.value.toLowerCase();
-         console.log(searchTerm)
-         let studentSearch = [];
          
+         searchInput.value = '';
+
          for ( let i = 0; i < students.length; i++ ) { 
+            
             let studentName = students[i].children[0].children[0].nextElementSibling.textContent
             if (studentName.includes(searchTerm)) {
-               console.log(studentName);
-               studentSearch.push(students[i]);
-               console.log(studentSearch);
-               
                students[i].style.display = 'block';
                students[i].className = 'student-item cf'
-               searchInput.value = '';
-               let existingButtonList = document.querySelector('.pagination');
-               const pageDiv = document.querySelector('.page')
-               let removeButtons = pageDiv.removeChild(existingButtonList);
                
-               showPage(studentSearch, 1);
-               appendPageLinks(studentSearch.length);
-               if (studentSearch.length === 0) {
-                  console.log(studentSearch.length)
-                  const resultsDiv = document.querySelectorAll('.pagination')
-                  const noSearchResults = document.createElement('P');
-                  noSearchResults.textContent = 'No Search Results';
-                  resultsDiv.appendChild(noSearchResults);
-               }
-           } else {
-               students[i].style.display = 'none';
-               students[i].className = '';
-               console.log(students[i])
-           }
+               //console.log(studentName);
+              
+               studentSearch.push(students[i]);
+               //console.log(studentSearch);
+               
+               //console.log(studentSearch.length);
+            } else {
+               
+               students[i].remove = ('student-item cf')
+               didntMeetCriteria.push(students[i]);
 
+               //console.log(didntMeetCriteria)
+            } 
          }
-      }
+         if (studentSearch.length === 0) {
+            
+            const noSearchResults = document.createElement('H3');
+            const referenceNode = document.querySelector('.student-list')
+            noSearchResults.className = 'no-search-results'
+            noSearchResults.textContent = 'No Search Results';
+            resultsDiv.insertBefore(noSearchResults, referenceNode);
+      } 
+      
+      const pageDiv = document.querySelector('.page')
+      let existingButtonList = document.querySelector('.pagination');
+      let removeButtons = pageDiv.removeChild(existingButtonList);   
+         showPage(studentSearch, 1);
+         
+         appendPageLinks(studentSearch.length, studentSearch);         
+         }
+   
+         
+        
+         
+         
    })
-      // searchBar.addEventListener('keyup', (e) => {
-      //    if (e.target.tagName === 'BUTTON') {
-      //       students.className = '';
-      //       const searchTerm = searchBar.firstElementChild.value.toLowerCase();
-      //       console.log(searchTerm)
-      //       for ( let i = 0; i < students.length; i++ ) {
-      //          students[i].style.display = 'none';
-      //          let studentName = students[i].children[0].children[0].nextElementSibling.textContent
-      //          console.log(studentName)
-      //          if (studentName.includes(searchTerm) && students[i].style.display === 'none') {
-      //             let studentSearch = [];
-      //             studentSearch.push(students[i]);
-      //             console.log(students[i]);
-      //             students[i].style.display = 'block';
-      //             students[i].className = 'student-item cf'
-      //             searchInput.value = '';
-      //             let existingButtonList = document.querySelector('.pagination').children;
-      //             existingButtonList.remove;
-                  
-      //             appendPageLinks(studentSearch.length);
-      //             if (studentSearch.length === 0) {
-      //                console.log(studentSearch.length)
-      //                const resultsDiv = document.querySelector('pagination')
-      //                const noSearchResults = document.createElement('P');
-      //                noSearchResults.textContent = 'No Search Results';
-      //                resultsDiv.appendChild(noSearchResults);
-      //             }
-      //         } else {
-      //             students[i].style.display = 'none';
-      //         }
-      //       }
-      //    }
-      // })
+
+          
 
 }
+
 
 search(students);
 
