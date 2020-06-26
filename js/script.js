@@ -112,15 +112,6 @@ addSearchBar();
 
 search = (list) => {
    
-   let searchBar = document.querySelector('.student-search');
-   
-   let searchInput = searchBar.children[0];
-   let studentSearch = [];
-   let didntMeetCriteria = [];
-   searchBar.addEventListener('click', (e) => {
-      
-      if (e.target.tagName === 'BUTTON') {
-         debugger
          refreshPage();
          const searchTerm = searchBar.firstElementChild.value.toLowerCase();
          
@@ -163,17 +154,21 @@ search = (list) => {
          
          appendPageLinks(studentSearch.length, studentSearch);         
          }
+
+let searchBar = document.querySelector('.student-search');
    
-         
-        
-         
-         
+let searchInput = searchBar.children[0];
+
+let studentSearch = [];
+let didntMeetCriteria = [];
+console.log(searchInput.textContent.length);
+
+searchBar.addEventListener('click', (e) => {
+
+      if (e.target.className === '.search-button' && searchInput.textContent.length > 0) {
+         console.log(searchInput);
+         search(students);
+      } else {
+         //alert('please enter a valid search term');
+      }
    })
-
-          
-
-}
-
-
-search(students);
-
