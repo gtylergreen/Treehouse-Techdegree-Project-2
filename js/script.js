@@ -80,8 +80,18 @@ addSearchBar = () => {
    searchButton.className = 'search-button'
    searchButton.textContent = 'Search';
    //adds an event listener on the button and runs the search function on click.
-   searchButton.addEventListener('click', () =>{
+   searchButton.addEventListener('click', () => {
       search(students)
+   })
+   //adds event listener on key press and runs search on provided criteria, if not an empty string.
+   searchInput.addEventListener('keyup', (e) => {
+      let searchInputValue = searchInput.value;
+         searchInputValue.textContent += `${e.code}`; 
+         if (searchInputValue === '') {
+            search(students);
+         }
+         console.log(searchInputValue);
+         search(students, searchInputValue);
    })
    //appends each element to the DOM.
    searchBar.appendChild(searchInput);
@@ -103,23 +113,21 @@ refreshPage = () => {
       let noSearchElement = page.firstElementChild.nextElementSibling;
       page.removeChild(noSearchElement);
       //noSearchText.textContent = ''
-   }
+   } 
 }
 
 //function to search that is called when the search button is clicked. It takes in a list.
-search = (list) => {
+search = (list, inputvalue) => {
    let searchBar = document.querySelector('.student-search');
    let searchInput = searchBar.children[0];
    //Set up two arrays to store items that meet search criteria and those that don't.
    let studentSearch = [];
    let didntMeetCriteria = [];
+   //Checks to see if an input was provided via the key press event listener. 
+   if (inputvalue) {
+      searchInput += inputvalue;
+   }
    const searchTerm = searchBar.firstElementChild.value.toLowerCase();
-   //Validation to ensure that the user entered something in the search input. If they
-   //didn't, they will get an alert and the program exits the function.
-   if (searchTerm.length <= 0 ) {
-      alert('Please enter a valid search term')
-      return
-   } 
    //If a valid search term is entered, the refresh function is called.
    refreshPage();
    searchInput.value = '';
@@ -141,7 +149,6 @@ search = (list) => {
    }
    //If there are no search results, text is added to the dom alerting the user.
    if (studentSearch.length === 0) {
-      //debugger
       refreshPage();
       const noSearchResults = document.createElement('H3');
       const referenceNode = document.querySelector('.student-list')
@@ -158,7 +165,6 @@ search = (list) => {
    //Calls the appendPageLinks function to add buttons to the page based on search results.   
    appendPageLinks(studentSearch);         
 }
-
 //Calls showPage function with page one to initially load the list
 //with the correct students displayed
 showPage(students, 1);
@@ -168,6 +174,3 @@ appendPageLinks(students);
 
 //Called to add search element to the page.
 addSearchBar();
-
-
-   
