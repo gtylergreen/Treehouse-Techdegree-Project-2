@@ -96,10 +96,13 @@ refreshPage = () => {
       students[i].removeAttribute('class');
    }
    //If there are no search results displaying on the page, removes
-   //the No Search Results message.
-   let noSearchText = document.querySelector('.no-search-results')
+   //the No Search Results element
+   let noSearchText = document.querySelector('.no-search-results');
+   let page = document.querySelector('.page');
    if (noSearchText) {
-      noSearchText.textContent = ''
+      let noSearchElement = page.firstElementChild.nextElementSibling;
+      page.removeChild(noSearchElement);
+      //noSearchText.textContent = ''
    }
 }
 
@@ -138,6 +141,7 @@ search = (list) => {
    }
    //If there are no search results, text is added to the dom alerting the user.
    if (studentSearch.length === 0) {
+      //debugger
       refreshPage();
       const noSearchResults = document.createElement('H3');
       const referenceNode = document.querySelector('.student-list')
