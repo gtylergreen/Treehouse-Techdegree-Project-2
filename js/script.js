@@ -90,6 +90,9 @@ addSearchBar = () => {
    const searchButton = document.createElement('button');
    searchButton.className = 'search-button'
    searchButton.textContent = 'Search';
+   searchButton.addEventListener('click', () =>{
+      search()
+   })
    searchBar.appendChild(searchInput);
    searchBar.appendChild(searchButton);
    searchBarDiv.appendChild(searchBar);
@@ -112,63 +115,42 @@ addSearchBar();
 
 search = (list) => {
    
-         refreshPage();
-         const searchTerm = searchBar.firstElementChild.value.toLowerCase();
-         
-         searchInput.value = '';
-
-         for ( let i = 0; i < students.length; i++ ) { 
-            
-            let studentName = students[i].children[0].children[0].nextElementSibling.textContent
-            if (studentName.includes(searchTerm)) {
-               students[i].style.display = 'block';
-               students[i].className = 'student-item cf'
-               
-               //console.log(studentName);
-              
-               studentSearch.push(students[i]);
-               //console.log(studentSearch);
-               
-               //console.log(studentSearch.length);
-            } else {
-               
-               students[i].remove = ('student-item cf')
-               didntMeetCriteria.push(students[i]);
-
-               //console.log(didntMeetCriteria)
-            } 
-         }
-         if (studentSearch.length === 0) {
-            
-            const noSearchResults = document.createElement('H3');
-            const referenceNode = document.querySelector('.student-list')
-            noSearchResults.className = 'no-search-results'
-            noSearchResults.textContent = 'No Search Results';
-            resultsDiv.insertBefore(noSearchResults, referenceNode);
-      } 
-      
-      const pageDiv = document.querySelector('.page')
-      let existingButtonList = document.querySelector('.pagination');
-      let removeButtons = pageDiv.removeChild(existingButtonList);   
-         showPage(studentSearch, 1);
-         
-         appendPageLinks(studentSearch.length, studentSearch);         
-         }
-
-let searchBar = document.querySelector('.student-search');
+   let searchBar = document.querySelector('.student-search');
+   let searchInput = searchBar.children[0];
+   let studentSearch = [];
+   let didntMeetCriteria = [];
    
-let searchInput = searchBar.children[0];
-
-let studentSearch = [];
-let didntMeetCriteria = [];
-console.log(searchInput.textContent.length);
-
-searchBar.addEventListener('click', (e) => {
-
-      if (e.target.className === '.search-button' && searchInput.textContent.length > 0) {
-         console.log(searchInput);
-         search(students);
+   console.log(searchInput.value);
+   const searchTerm = searchBar.firstElementChild.value.toLowerCase();
+   if (searchTerm.length <= 0 ) {
+      //debugger
+      alert('Please enter a valid search term')
+      return
+   } 
+   refreshPage();
+   searchInput.value = '';
+   for ( let i = 0; i < students.length; i++ ) { 
+      let studentName = students[i].children[0].children[0].nextElementSibling.textContent
+      if (studentName.includes(searchTerm)) {
+         students[i].style.display = 'block';
+         students[i].className = 'student-item cf'
+         studentSearch.push(students[i]);
       } else {
-         //alert('please enter a valid search term');
-      }
-   })
+         students[i].remove = ('student-item cf')
+         didntMeetCriteria.push(students[i]);
+         } 
+   }
+   if (studentSearch.length === 0) {
+      const noSearchResults = document.createElement('H3');
+      const referenceNode = document.querySelector('.student-list')
+      noSearchResults.className = 'no-search-results'
+      noSearchResults.textContent = 'No Search Results';
+      resultsDiv.insertBefore(noSearchResults, referenceNode);
+   }  
+   const pageDiv = document.querySelector('.page')
+   let existingButtonList = document.querySelector('.pagination');
+   let removeButtons = pageDiv.removeChild(existingButtonList);   
+   showPage(studentSearch, 1);   
+   appendPageLinks(studentSearch.length, studentSearch);         
+   }
+   
